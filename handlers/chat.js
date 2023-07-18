@@ -67,8 +67,7 @@ const sendMessage = async (req, res) => {
             // }
             console.log(completion.data.choices[0].text);
             const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] });
-            console.log(answerData);
-            res.status(200).json({ result: answerData });
+            res.status(200).json({ result: answerData?.answer || "Please ask a relevant question." });
         }
     } catch (error) {
         if (error.response) {
@@ -91,8 +90,10 @@ function generatePrompt(message, allQuestionAnswers) {
     let str = "";
     str = str + initialMessage;
     for (let i = 0; i < allQuestionAnswers.length; i++) {
-        const message = `Employee:${allQuestionAnswers[i]?.questionId?.question} \n ${allQuestionAnswers[i]?.questionId?.departmentId?.departmentName}:${allQuestionAnswers[0]?._id}`;
-        str = str + message;
+        if (allQuestionAnswers[i]?.questionId?.status) {
+            const message = `Employee:${allQuestionAnswers[i]?.questionId?.question} \n ${allQuestionAnswers[i]?.questionId?.departmentId?.departmentName}:${allQuestionAnswers[0]?._id}`;
+            str = str + message;
+        }
     }
     str = str + `Employee:${message} \n chatbot:`;
     return str;
