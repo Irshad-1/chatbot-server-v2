@@ -42,6 +42,7 @@ const sendMessage = async (req, res) => {
             path: "questionId",
             populate: { path: "departmentId" },
         });
+        console.log(allQuestionAnswers);
         const completion = await openai.createCompletion({
             model: "text-davinci-003",
             prompt: generatePrompt(message, allQuestionAnswers),
@@ -95,6 +96,7 @@ function generatePrompt(message, allQuestionAnswers) {
             str = str + message;
         }
     }
+    console.log(str);
     str = str + `Employee:${message} \n chatbot:`;
     return str;
     return ` I am a chat bot of a company named Indus Net Technologies Private Limited. I acts as a helpdesk for common FAQ , griveance redressal , query of employees relating to company's policies and rules and regulation and my responses are based on the below conversations only .  
