@@ -92,7 +92,7 @@ function generatePrompt(message, allQuestionAnswers) {
     str = str + initialMessage;
     for (let i = 0; i < allQuestionAnswers.length; i++) {
         if (allQuestionAnswers[i]?.questionId?.status) {
-            const message = `Employee:${allQuestionAnswers[i]?.questionId?.question} \n ${allQuestionAnswers[i]?.questionId?.departmentId?.departmentName}:${allQuestionAnswers[i]?._id}`;
+            const message = `Employee:${allQuestionAnswers[i]?.questionId?.question} \n ${allQuestionAnswers[i]?.questionId?.departmentId?.departmentName}:${allQuestionAnswers[i]?._id} \n`;
             str = str + message;
         }
     }
