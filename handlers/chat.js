@@ -68,6 +68,7 @@ const sendMessage = async (req, res) => {
             // }
             console.log(completion.data.choices[0].text);
             const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] });
+            console.log(answerData);
             res.status(200).json({ result: answerData?.answer || "Please ask a relevant question." });
         }
     } catch (error) {
