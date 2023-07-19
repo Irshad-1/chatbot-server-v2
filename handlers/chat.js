@@ -66,9 +66,9 @@ const sendMessage = async (req, res) => {
             //     if (isTicketCreationRequired == "true")
             //         await Chat.create({ category, question: message, userId: decoded._id });
             // }
-            console.log(completion.data.choices[0].text);
-            const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] });
-            console.log(answerData);
+            console.log("I am answer reference", completion.data.choices[0].text);
+            const answerData = await Answer.findOne({ _id: completion.data.choices[0].text });
+            console.log("I am answer data from DB", answerData);
             res.status(200).json({ result: answerData?.answer || "Please ask a relevant question." });
         }
     } catch (error) {
