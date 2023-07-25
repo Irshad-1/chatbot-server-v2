@@ -67,9 +67,22 @@ const sendMessage = async (req, res) => {
             //         await Chat.create({ category, question: message, userId: decoded._id });
             // }
             console.log("I am answer reference", completion.data.choices[0].text);
-            const answerData = await Answer.findOne({ _id: completion.data.choices[0].text });
-            console.log("I am answer data from DB", answerData);
-            res.status(200).json({ result: answerData?.answer || "Please ask a relevant question." });
+            let indexOf = completion.data.choices[0].text.indexOf(":");
+            if (indexOf != -1) {
+                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] }).populate('linkedQuestion');
+                res.status(200).json({
+                    result: answerData?.answer || "Please ask a relevant question.",
+                    linkedQuestion: answerData?.linkedQuestion
+                });
+            }
+            else {
+                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text }).populate('linkedQuestion');
+                res.status(200).json({
+                    result: answerData?.answer || "Please ask a relevant question.",
+                    linkedQuestion: answerData?.linkedQuestion
+                });
+            }
+
         }
     } catch (error) {
         if (error.response) {
@@ -99,6 +112,7 @@ function generatePrompt(message, allQuestionAnswers) {
     }
     console.log(str);
     str = str + `Employee:${message} \n chatbot:`;
+    // console.log("I am str", str);
     return str;
     return ` I am a chat bot of a company named Indus Net Technologies Private Limited. I acts as a helpdesk for common FAQ , griveance redressal , query of employees relating to company's policies and rules and regulation and my responses are based on the below conversations only .  
     Currently I am answering queries related to HR,accounts/Finance and systems department only . My replies also includes suffix of the department name from which the queries are getting answered.For Example:If the queries is answered by "Accounts/Finance department", then add "(Accounts/Finance)" in the end of the reply or if the queries are getting answered by "HR"  then add "(HR)" or if the queries are getting answered by "Systems"  then add "(Systems)" 

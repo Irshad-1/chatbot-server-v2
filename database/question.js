@@ -6,6 +6,10 @@ const questionSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        isSystemQuestion: {
+            type: Boolean,
+            required: true,
+        },
         status: {
             type: Boolean,
             required: true,
@@ -24,6 +28,14 @@ const questionSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
+        },
+        action: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Action",
+        },
+        linkedQuestion: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Question",
         },
     },
     {

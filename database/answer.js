@@ -15,9 +15,6 @@ const answerSchema = new mongoose.Schema(
             type: Boolean,
             required: true,
         },
-        actionType: {
-            type: String,
-        },
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -28,6 +25,14 @@ const answerSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        linkedQuestion: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Question",
+        },
+        action: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Action",
+        }
     },
     {
         timestamps: true,

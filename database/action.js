@@ -6,10 +6,6 @@ const actionSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        actionLabel: {
-            type: String,
-            required: true,
-        },
         status: {
             type: Boolean,
             required: true,
