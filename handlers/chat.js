@@ -68,15 +68,22 @@ const sendMessage = async (req, res) => {
             // }
             console.log("I am answer reference", completion.data.choices[0].text);
             let indexOf = completion.data.choices[0].text.indexOf(":");
+            console.log("indexOf", indexOf);
             if (indexOf != -1) {
-                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] }).populate('linkedQuestion');
+                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] }).populate({
+                    path: "linkedQuestion",
+                    populate: { path: "linkedQuestion" },
+                });
                 res.status(200).json({
                     result: answerData?.answer || "Please ask a relevant question.",
                     linkedQuestion: answerData?.linkedQuestion
                 });
             }
             else {
-                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text }).populate('linkedQuestion');
+                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text }).populate({
+                    path: "linkedQuestion",
+                    populate: { path: "linkedQuestion" },
+                });
                 res.status(200).json({
                     result: answerData?.answer || "Please ask a relevant question.",
                     linkedQuestion: answerData?.linkedQuestion
@@ -101,7 +108,7 @@ const sendMessage = async (req, res) => {
 
 function generatePrompt(message, allQuestionAnswers) {
     let initialMessage =
-        "I am a chat bot of a company named Indus Net Technologies Private Limited. I acts as a helpdesk for common FAQ , griveance redressal , query of employees relating to company's policies and rules and regulation and my responses are based on the below conversations only .If some one asks questions which is not related to the below conversation , then I will respond as 'Unknown'";
+        "I am a chat bot of a company named Indus Net Technologies Private Limited. I acts as a helpdesk for common FAQ , griveance redressal , query of employees relating to company's policies and rules and regulation and my responses are based on the below conversations only .If some one asks questions which is not related to the below conversation , then I will respond as 'Unknown'.Please respond with given replies only, do not add any sentence by your own .";
     let str = "";
     str = str + initialMessage;
     for (let i = 0; i < allQuestionAnswers.length; i++) {

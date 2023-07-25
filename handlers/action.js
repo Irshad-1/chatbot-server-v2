@@ -42,6 +42,12 @@ const getActionMessage = (actionName) => {
             return "A ticket has been created with ID : 141691 . Please do the follow up using this Id";
         case "Fetch all Leave":
             return "You are having 2 days of casual leave and 5 days of planned leave.";
+        case "Apply for casual leave":
+            let date = new Date().toUTCString().slice(5, 16);
+            return `You have successfully applied for casual leave on ${date}`;
+        case "Apply for planned leave":
+            date = new Date().toUTCString().slice(5, 16);
+            return `You have successfully applied for planned leave on ${date}`;
         default:
             return "Unknown action!";
     }
