@@ -42,14 +42,13 @@ const sendMessage = async (req, res) => {
             path: "questionId",
             populate: { path: "departmentId" },
         });
-        console.log(allQuestionAnswers);
         const completion = await openai.createCompletion({
             model: "text-davinci-003",
             prompt: generatePrompt(message, allQuestionAnswers),
             temperature: 0.1,
             max_tokens: 2000,
         });
-        if (completion.data.choices[0].text.trim() === "Unknown") {
+        if (completion.data.choices[0].text.trim() === "Unknown" || completion.data.choices[0].text.trim() === "Unknown.") {
             res.status(200).json({ result: "Please ask a relevant question." });
         } else {
             // const chatResponse = completion.data.choices[0].text;
@@ -70,22 +69,18 @@ const sendMessage = async (req, res) => {
             let indexOf = completion.data.choices[0].text.indexOf(":");
             console.log("indexOf", indexOf);
             if (indexOf != -1) {
-                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] }).populate({
-                    path: "linkedQuestion",
-                    populate: { path: "linkedQuestion" },
-                });
+                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text.split(":")[1] }).populate("linkedQuestion");
                 res.status(200).json({
                     result: answerData?.answer || "Please ask a relevant question.",
+                    action: answerData?.action || "",
                     linkedQuestion: answerData?.linkedQuestion
                 });
             }
             else {
-                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text }).populate({
-                    path: "linkedQuestion",
-                    populate: { path: "linkedQuestion" },
-                });
+                const answerData = await Answer.findOne({ _id: completion.data.choices[0].text }).populate("linkedQuestion");
                 res.status(200).json({
                     result: answerData?.answer || "Please ask a relevant question.",
+                    action: answerData?.action || "",
                     linkedQuestion: answerData?.linkedQuestion
                 });
             }
@@ -108,7 +103,7 @@ const sendMessage = async (req, res) => {
 
 function generatePrompt(message, allQuestionAnswers) {
     let initialMessage =
-        "I am a chat bot of a company named Indus Net Technologies Private Limited. I acts as a helpdesk for common FAQ , griveance redressal , query of employees relating to company's policies and rules and regulation and my responses are based on the below conversations only .If some one asks questions which is not related to the below conversation , then I will respond as 'Unknown'.Please respond with given replies only, do not add any sentence by your own .";
+        "I am a chat bot of a company named Indus Net Technologies Private Limited. I acts as a helpdesk for common FAQ , griveance redressal , query of employees relating to company's policies and rules and regulation and my responses are based on the below conversations only .If some one asks questions like  hi , hello ,who are you? , what you do?, how are you ? or any other general question which is not related to the below conversation , then I will respond as 'Unknown'.Please respond with below given replies only, do not add any sentence by your own and don't modify the responses. Please send responses as it is provided to you.";
     let str = "";
     str = str + initialMessage;
     for (let i = 0; i < allQuestionAnswers.length; i++) {

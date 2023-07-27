@@ -1,4 +1,5 @@
 const { Action } = require("../database/action");
+const { Question } = require("../database/question");
 
 const addAction = async (req, res) => {
     try {
@@ -29,7 +30,15 @@ const fireAction = async (req, res) => {
     try {
         const action = await Action.findOne({ _id: req.body.actionId });
         const message = getActionMessage(action.actionName);
-        return res.status(200).send({ message });
+        if (req.body?.linkedQuestion) {
+            const linkedQuestion = await Question.findOne({ _id: req.body.linkedQuestion });
+            return res.status(200).send({ message, linkedQuestion });
+        }
+        else {
+            return res.status(200).send({ message });
+        }
+
+
     } catch (error) {
         console.log(error);
         return res.status(500).send({ message: error || "Internal Server Error" });
