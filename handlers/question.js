@@ -108,7 +108,7 @@ const getAllQuestionAnswer = async (req, res) => {
         const allQuestionAnswers = await Answer.find().populate({
             path: "questionId",
             populate: { path: "departmentId" },
-        });
+        }).populate('action');
         return res.send(allQuestionAnswers);
     } catch (error) {
         console.log(error);
